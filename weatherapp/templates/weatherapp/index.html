@@ -1,0 +1,235 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap"
+        rel="stylesheet"
+    />
+    <style>
+        :root {
+            --white: #ffffff;
+            --transp-white: rgba(255, 255, 255, 0.7);
+            --blue-1: #62b8f5;
+            --blue-2: #4475ef;
+            --shadow: rgba(3, 46, 87, 0.2);
+        }
+
+        body {
+            background-image: url('https://images.pexels.com/photos/3008509/pexels-photo-3008509.jpeg?auto=compress&cs=tinysrgb&w=1600');
+            background-size: cover;
+            background-repeat: no-repeat;
+            margin: 0;
+            width: 100%;
+            height: 100%;
+            font-family: "Poppins", sans-serif;
+            animation: fadeInBackground 2s ease-in-out;
+        }
+
+        @keyframes fadeInBackground {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--white);
+            margin-bottom: 15px;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+        }
+
+        .container {
+            width: 80%;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            margin: 5rem auto;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+            animation: fadeInUp 1s ease-in-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        form {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        input {
+            width: 70%;
+            padding: 0.8rem;
+            font-size: 1rem;
+            border: 2px solid var(--transp-white);
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.2);
+            color: var(--white);
+            transition: 0.3s;
+        }
+
+        input::placeholder {
+            color: var(--white);
+        }
+
+        input:focus {
+            border-color: var(--blue-1);
+            outline: none;
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            color: var(--white);
+            background: var(--blue-2);
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .weather {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            animation: fadeInWeather 1s ease-in-out;
+        }
+
+        @keyframes fadeInWeather {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .left,
+        .right {
+            flex: 1;
+            padding: 1.5rem;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            color: var(--white);
+            text-align: center;
+        }
+
+        .temp {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+        }
+
+        .city {
+            font-size: 1.5rem;
+        }
+
+        .icon img {
+            width: 100px;
+        }
+
+        .condition {
+            font-size: 1.2rem;
+            margin-top: 1rem;
+        }
+
+        @media only screen and (max-width: 768px) {
+            .container {
+                width: 95%;
+            }
+
+            .weather {
+                flex-direction: column;
+            }
+
+            form {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            input {
+                width: 100%;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body {% if exception_occurred %}
+    style="background-image: url('https://images.pexels.com/photos/3008509/pexels-photo-3008509.jpeg?auto=compress&cs=tinysrgb&w=1600');" 
+  {% else %}
+  style="background-image: url('{{ image_url }}');"
+  {% endif %}>
+    <div class="container">
+        <h1 class="heading">Weather App</h1>
+        <form method="POST">
+            {% csrf_token %}
+            <input type="text" name="city" placeholder="Enter City">
+            <button type="submit" class="btn">Search</button>
+        </form>
+        <div class="weather">
+            <div class="left">
+                <h2 class="temp">{{ temp }}&#176; C</h2>
+                <h2 class="city">{{ city }}</h2>
+            </div>
+            <div class="right">
+                <div class="icon">
+                    <img src="http://openweathermap.org/img/w/{{ icon }}.png" alt="weather icon">
+                </div>
+                <div class="condition">
+                    <p>{{ description }}</p>
+                    <p>{{ day }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if exception_occurred %}
+        <script>
+            window.onload = function() {
+                alert("City information is not available to Weather API");
+            }
+        </script>
+    {% endif %}
+</body>
+</html>
